@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💗 Gutachten-Manager Deluxe (Web)</title>
+  <meta name="theme-color" content="#ff69b4" />
+  <style>
+    :root{
+      --bg:#ffe6f0;
+      --card:#ffffff;
+      --pink:#ff69b4;
+      --pink2:#ffb6c1;
+      --text:#2b2b2b;
+      --muted:#6b6b6b;
+      --border:rgba(0,0,0,.08);
+      --shadow: 0 12px 30px rgba(0,0,0,.08);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 600px at 10% 0%, #fff 0%, var(--bg) 45%, #ffd6ea 100%);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 980px;
+      margin: 28px auto;
+      padding: 0 16px 36px;
+    }
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 16px;
+    }
+    .title{
+      background: linear-gradient(135deg, #fff, rgba(255,255,255,.65));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      flex: 1;
+    }
+    h1{
+      margin:0 0 6px;
+      font-size: 20px;
+      letter-spacing: .2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 960px){
+      .grid{ grid-template-columns: 390px 1fr; align-items:start; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow:hidden;
+    }
+
+    .form{
+      display:grid;
+      gap: 10px;
+    }
+    label{
+      display:block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select{
+      width:100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.95);
+      outline:none;
+      transition: .15s ease;
+      font-size: 14px;
+    }
+    input:focus, select:focus{
+      border-color: rgba(255,105,180,.65);
+      box-shadow: 0 0 0 4px rgba(255,105,180,.12);
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btns{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    button{
+      border:0;
+      cursor:pointer;
+      padding: 11px 12px;
+      border-radius: 14px;
+      font-weight: 650;
+      font-size: 14px;
+      transition: .15s ease;
+      background: var(--pink2);
+      color: #2b2b2b;
+    }
+    button:hover{ transform: translateY(-1px); filter: brightness(.98); }
+    button:active{ transform: translateY(0px); }
+
+    .btn-outline{
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(0,0,0,.12);
+      font-weight: 600;
+    }
+
+    .progressBox{
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(0,0,0,.12);
+    }
+    .progressLabel{
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+    .bar{
+      height: 14px;
+      background: rgba(0,0,0,.08);
+      border-radius: 999px;
+      overflow:hidden;
+      position:relative;
+    }
+    .bar > div{
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff9acb, var(--pink));
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+
+    .tableWrap{
+      overflow:auto;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.85);
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      min-width: 820px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      font-size: 13px;
+      text-align:left;
+      white-space:nowrap;
+    }
+    th{
+      position:sticky;
+      top:0;
+      background: rgba(255,255,255,.95);
+      z-index: 1;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: .2px;
+    }
+    .pill{
+      display:inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.9);
+    }
+    .pill.paid{
+      border-color: rgba(0,160,60,.25);
+      background: rgba(0,160,60,.08);
+    }
+    .pill.unpaid{
+      border-color: rgba(200,60,60,.25);
+      background: rgba(200,60,60,.08);
+    }
+    .actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap:wrap;
+    }
+    .actions .hint{
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .danger{
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(200,60,60,.25);
+      color: #8b1f1f;
+    }
+    .note{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.95);
+      border: 1px solid rgba(0,0,0,.12);
+      box-shadow: 0 12px 30px rgba(0,0,0,.12);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      display:none;
+      z-index: 10;
+    }
+    .toast.show{ display:block; }
+  </style>
+
+  <!-- Chart.js (für Monatsdiagramm) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>💗 Gutachten-Manager Deluxe (Web)</h1>
+        <p class="sub">
+          Speichert lokal im Browser (localStorage). Fortschritt bis <b>45.000 €</b>, Einträge, Monatsdiagramm.
+        </p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left: Form -->
+      <section class="card">
+        <div class="form">
+          <div>
+            <label for="gutachten">Gutachtenname</label>
+            <input id="gutachten" type="text" placeholder="z.B. Gutachten A" />
+          </div>
+
+          <div>
+            <label for="kosten">Kosten (€) (max. 1.000 €)</label>
+            <input id="kosten" type="number" inputmode="decimal" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
+          </div>
+
+          <div class="row2">
+            <div>
+              <label for="kategorie">Kategorie</label>
+              <select id="kategorie">
+                <option value="">— wählen —</option>
+                <option value="BBRZ">BBRZ</option>
+                <option value="Ordination">Ordination</option>
+              </select>
+            </div>
+            <div>
+              <label for="bezahlt">Bezahlt</label>
+              <select id="bezahlt">
+                <option value="">— wählen —</option>
+                <option value="Ja">Ja</option>
+                <option value="Nein">Nein</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="klient">Klient/in</label>
+            <input id="klient" type="text" placeholder="z.B. Max Mustermann" />
+          </div>
+
+          <div>
+            <label for="datum">Datum (optional, YYYY-MM-DD)</label>
+            <input id="datum" type="date" />
+          </div>
+
+          <div class="btns">
+            <button id="saveBtn">💾 Speichern</button>
+            <button id="chartBtn" class="btn-outline">📊 Modernes Diagramm anzeigen</button>
+          </div>
+
+          <div class="progressBox">
+            <p id="progressLabel" class="progressLabel">—</p>
+            <div class="bar" aria-label="Fortschritt">
+              <div id="barFill"></div>
+            </div>
+            <p class="note">
+              Hinweis: Wie in der Python-Version wird der Fortschritt aus der Summe der Kosten berechnet und bei 100% gedeckelt.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Table + Tools -->
+      <section class="card">
+        <div class="actions">
+          <div class="hint">Einträge</div>
+          <div class="btns">
+            <button id="exportBtn" class="btn-outline">⬇️ CSV Export</button>
+            <label class="btn-outline" style="display:inline-flex; align-items:center; gap:8px; padding:11px 12px; border-radius:14px; cursor:pointer;">
+              ⬆️ CSV Import
+              <input id="importFile" type="file" accept=".csv,text/csv" style="display:none;">
+            </label>
+            <button id="clearBtn" class="danger">🗑️ Alles löschen</button>
+          </div>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Gutachten</th>
+                <th>Kosten (€)</th>
+                <th>Kategorie</th>
+                <th>Klient/in</th>
+                <th>Bezahlt</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:14px;">
+          <canvas id="chart" height="120" style="display:none;"></canvas>
+        </div>
+
+        <p class="note">
+          CSV-Format entspricht der Python-Datei-Spaltenlogik:
+          <code>Datum,Gutachten,Kosten,Kategorie,Klient,Bezahlt</code>
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // ===== Konfiguration (wie Python) =====
+    const STORAGE_KEY = "gutachten_erweitert_web_v1";
+    const ZIELBETRAG = 45000; // 45.000 €
+
+    // ===== Helpers =====
+    const $ = (id) => document.getElementById(id);
+
+    function todayISO(){
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function toast(msg){
+      const el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(()=>el.classList.remove("show"), 2200);
+    }
+
+    function loadEntries(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      }catch{
+        return [];
+      }
+    }
+
+    function saveEntries(entries){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function sumEinnahmen(entries){
+      return entries.reduce((acc,e)=> acc + (Number(e.Kosten) || 0), 0);
+    }
+
+    function formatEuro(n){
+      const v = Number(n) || 0;
+      return v.toLocaleString("de-AT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderProgress(entries){
+      const einnahmen = sumEinnahmen(entries);
+      const anzahl = entries.length;
+      const prozent = Math.min(Math.floor((einnahmen / ZIELBETRAG) * 100), 100);
+
+      $("progressLabel").textContent =
+        `Einnahmen: ${formatEuro(einnahmen)} € / 45.000 € | Gutachten: ${anzahl} Stück | ${prozent}% erreicht`;
+
+      $("barFill").style.width = `${Math.max(0, Math.min(100, prozent))}%`;
+    }
+
+    function renderTable(entries){
+      const tb = $("tbody");
+      tb.innerHTML = "";
+
+      // Neueste oben (praktischer)
+      const sorted = [...entries].sort((a,b)=> (b.Datum||"").localeCompare(a.Datum||""));
+
+      for(const e of sorted){
+        const tr = document.createElement("tr");
+
+        const paid = (e.Bezahlt || "").trim() === "Ja";
+        const paidClass = paid ? "paid" : "unpaid";
+
+        tr.innerHTML = `
+          <td>${escapeHtml(e.Datum || "")}</td>
+          <td>${escapeHtml(e.Gutachten || "")}</td>
+          <td>${escapeHtml(formatEuro(e.Kosten))}</td>
+          <td>${escapeHtml(e.Kategorie || "")}</td>
+          <td>${escapeHtml(e.Klient || "")}</td>
+          <td><span class="pill ${paidClass}">${escapeHtml(e.Bezahlt || "")}</span></td>
+        `;
+        tb.appendChild(tr);
+      }
+    }
+
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // ===== Save Entry (wie eintrag_speichern) =====
+    function saveEntry(){
+      const Gutachten = $("gutachten").value.trim();
+      const kostenRaw = $("kosten").value.trim();
+      const Kategorie = $("kategorie").value.trim();
+      const Klient = $("klient").value.trim();
+      const Bezahlt = $("bezahlt").value.trim();
+      const Datum = $("datum").value || todayISO();
+
+      // Kosten validieren (Zahl + max 1000)
+      const Kosten = Number(kostenRaw);
+      if(!Number.isFinite(Kosten)){
+        alert("Kosten müssen eine Zahl sein.");
+        return;
+      }
+      if(Kosten > 1000){
+        alert("Einzelwert darf maximal 1.000 € betragen.");
+        return;
+      }
+      if(Kosten < 0){
+        alert("Kosten dürfen nicht negativ sein.");
+        return;
+      }
+
+      const entry = { Datum, Gutachten, Kosten, Kategorie: Kategorie || "", Klient, Bezahlt: Bezahlt || "" };
+
+      const entries = loadEntries();
+      entries.push(entry);
+      saveEntries(entries);
+
+      // Felder leeren (wie Python)
+      $("gutachten").value = "";
+      $("kosten").value = "";
+      $("klient").value = "";
+      $("datum").value = "";
+      $("kategorie").value = "";
+      $("bezahlt").value = "";
+
+      toast("Eintrag erfolgreich gespeichert.");
+      renderAll();
+    }
+
+    // ===== Diagramm (wie diagramm_anzeigen, monatliche Kosten sum) =====
+    let chartInstance = null;
+
+    function monthlyAggregate(entries){
+      // group by YYYY-MM
+      const map = new Map();
+      for(const e of entries){
+        const d = (e.Datum || "").slice(0,7); // YYYY-MM
+        if(!/^\d{4}-\d{2}$/.test(d)) continue;
+        const prev = map.get(d) || { count:0, sum:0 };
+        prev.count += 1;
+        prev.sum += Number(e.Kosten) || 0;
+        map.set(d, prev);
+      }
+      const keys = [...map.keys()].sort((a,b)=>a.localeCompare(b));
+      return {
+        labels: keys,
+        sums: keys.map(k => Math.round((map.get(k).sum || 0))),
+        counts: keys.map(k => map.get(k).count || 0),
+      };
+    }
+
+    function showChart(){
+      const entries = loadEntries();
+      const { labels, sums } = monthlyAggregate(entries);
+
+      const canvas = $("chart");
+      canvas.style.display = "block";
+
+      if(chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(canvas, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Einnahmen (€)",
+            data: sums,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            title: { display: true, text: "Monatliche Einnahmen Übersicht" },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.raw} €`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 }
+            }
+          }
+        }
+      });
+
+      if(labels.length === 0){
+        toast("Noch keine gültigen Datumswerte für Monatsdiagramm.");
+      }
+    }
+
+    // ===== CSV Export/Import =====
+    function csvEscape(val){
+      const s = String(val ?? "");
+      if(/[",\n\r;]/.test(s)) return `"${s.replaceAll('"','""')}"`;
+      return s;
+    }
+
+    function exportCSV(){
+      const entries = loadEntries();
+      const header = ["Datum","Gutachten","Kosten","Kategorie","Klient","Bezahlt"];
+      const lines = [header.join(",")];
+
+      for(const e of entries){
+        const row = [
+          e.Datum ?? "",
+          e.Gutachten ?? "",
+          e.Kosten ?? "",
+          e.Kategorie ?? "",
+          e.Klient ?? "",
+          e.Bezahlt ?? ""
+        ].map(csvEscape);
+        lines.push(row.join(","));
+      }
+
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "gutachten_erweitert.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      toast("CSV exportiert.");
+    }
+
+    function parseCSV(text){
+      // Minimaler CSV Parser (Komma + Quotes)
+      const rows = [];
+      let i = 0, field = "", row = [], inQuotes = false;
+
+      while(i < text.length){
+        const c = text[i];
+
+        if(inQuotes){
+          if(c === '"'){
+            const next = text[i+1];
+            if(next === '"'){ field += '"'; i += 2; continue; }
+            inQuotes = false; i++; continue;
+          }
+          field += c; i++; continue;
+        }else{
+          if(c === '"'){ inQuotes = true; i++; continue; }
+          if(c === ","){
+            row.push(field); field = ""; i++; continue;
+          }
+          if(c === "\n" || c === "\r"){
+            if(c === "\r" && text[i+1] === "\n") i++;
+            row.push(field); field = "";
+            if(row.length > 1 || row[0] !== "") rows.push(row);
+            row = [];
+            i++; continue;
+          }
+          field += c; i++; continue;
+        }
+      }
+      row.push(field);
+      if(row.length > 1 || row[0] !== "") rows.push(row);
+      return rows;
+    }
+
+    function importCSVFile(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const text = String(reader.result || "");
+          const rows = parseCSV(text);
+
+          if(rows.length === 0) throw new Error("CSV ist leer.");
+
+          const header = rows[0].map(h => h.trim());
+          const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+          const iDatum = idx("Datum");
+          const iGut = idx("Gutachten");
+          const iKos = idx("Kosten");
+          const iKat = idx("Kategorie");
+          const iKli = idx("Klient");
+          const iBez = idx("Bezahlt");
+
+          if([iDatum,iGut,iKos,iKat,iKli,iBez].some(x=>x<0)){
+            throw new Error("CSV Header muss enthalten: Datum,Gutachten,Kosten,Kategorie,Klient,Bezahlt");
+          }
+
+          const entries = [];
+          for(let r=1; r<rows.length; r++){
+            const cols = rows[r];
+            const Datum = (cols[iDatum] || "").trim() || todayISO();
+            const Gutachten = (cols[iGut] || "").trim();
+            const Kosten = Number(String(cols[iKos] || "").replace(",", "."));
+            const Kategorie = (cols[iKat] || "").trim();
+            const Klient = (cols[iKli] || "").trim();
+            const Bezahlt = (cols[iBez] || "").trim();
+
+            if(!Number.isFinite(Kosten)) continue;         // skip ungültig
+            if(Kosten > 1000 || Kosten < 0) continue;      // wie Regel
+            entries.push({ Datum, Gutachten, Kosten, Kategorie, Klient, Bezahlt });
+          }
+
+          saveEntries(entries);
+          toast(`CSV importiert (${entries.length} Einträge).`);
+          renderAll();
+        }catch(err){
+          alert("Import fehlgeschlagen: " + (err?.message || err));
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function clearAll(){
+      if(confirm("Wirklich ALLE Einträge löschen?")){
+        localStorage.removeItem(STORAGE_KEY);
+        if(chartInstance){ chartInstance.destroy(); chartInstance = null; }
+        $("chart").style.display = "none";
+        toast("Alles gelöscht.");
+        renderAll();
+      }
+    }
+
+    function renderAll(){
+      const entries = loadEntries();
+      renderTable(entries);
+      renderProgress(entries);
+    }
+
+    // ===== Events =====
+    $("saveBtn").addEventListener("click", saveEntry);
+    $("chartBtn").addEventListener("click", showChart);
+    $("exportBtn").addEventListener("click", exportCSV);
+    $("clearBtn").addEventListener("click", clearAll);
+    $("importFile").addEventListener("change", (e)=>{
+      const file = e.target.files?.[0];
+      if(file) importCSVFile(file);
+      e.target.value = "";
+    });
+
+    // Initial
+    renderAll();
+  </script>
+</body>
+</html>
