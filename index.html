@@ -8,36 +8,27 @@
 
   <style>
     :root{
-      --pink:#ff69b4;
-      --pink2:#ffb6c1;
-      --bg:#ffe6f0;
-      --card:#fff;
-      --border:rgba(0,0,0,.10);
-      --shadow:0 10px 25px rgba(0,0,0,.08);
-      --radius:18px;
-      --muted:#666;
+      --pink:#ff69b4; --pink2:#ffb6c1; --bg:#ffe6f0; --card:#fff;
+      --border:rgba(0,0,0,.10); --shadow:0 10px 25px rgba(0,0,0,.08);
+      --radius:18px; --muted:#666;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background: radial-gradient(1200px 600px at 10% 0%, #fff 0%, var(--bg) 45%, #ffd6ea 100%);
-    }
-    .wrap{max-width:1250px;margin:20px auto;padding:15px;}
-    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px;border:1px solid var(--border);}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background: radial-gradient(1200px 600px at 10% 0%, #fff 0%, var(--bg) 45%, #ffd6ea 100%);}
+    .wrap{max-width:1300px;margin:20px auto;padding:15px;}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+      padding:16px;margin-bottom:14px;border:1px solid var(--border);}
     h1{margin:0 0 6px;font-size:22px}
     .sub{color:var(--muted);font-size:13px;margin:0;line-height:1.35}
     .grid{display:grid;gap:14px;}
-    @media(min-width:980px){.grid{grid-template-columns:390px 1fr}}
+    @media(min-width:980px){.grid{grid-template-columns:420px 1fr}}
     label{font-size:12px;color:var(--muted);display:block;margin-top:10px;margin-bottom:6px}
     input,select{
       width:100%;padding:10px 11px;border-radius:12px;border:1px solid var(--border);
       background:#fff;outline:none;
     }
     input:focus,select:focus{box-shadow:0 0 0 4px rgba(255,105,180,.14);border-color:rgba(255,105,180,.6)}
-    button{
-      border:0;border-radius:12px;padding:10px 14px;font-weight:650;cursor:pointer;background:var(--pink2);
-    }
+    button{border:0;border-radius:12px;padding:10px 14px;font-weight:650;cursor:pointer;background:var(--pink2);}
     button:hover{filter:brightness(.96)}
     .btn-outline{background:#fff;border:1px solid var(--border);font-weight:650}
     .danger{background:#fff;border:1px solid rgba(200,60,60,.35);color:#8b1f1f}
@@ -46,7 +37,7 @@
     .small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}
 
     .tableWrap{overflow:auto;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:rgba(255,255,255,.75)}
-    table{width:100%;border-collapse:collapse;min-width:1200px}
+    table{width:100%;border-collapse:collapse;min-width:1300px}
     th,td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06);font-size:13px;white-space:nowrap;text-align:left}
     th{background:rgba(250,250,250,.95);position:sticky;top:0;z-index:1;color:var(--muted);font-size:12px}
 
@@ -67,6 +58,7 @@
     }
     .toast.show{display:block}
     .icon-btn{padding:8px 10px;border-radius:10px}
+    .inline{display:inline-flex;align-items:center;gap:8px}
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -77,89 +69,29 @@
 
   <div class="card">
     <h1>💗 Gutachten Manager Deluxe</h1>
-    <p class="sub">Gutachten + Arbeitsplan – alles lokal gespeichert (localStorage)</p>
+    <p class="sub">
+      Arbeitsplan + Gutachten – lokal gespeichert. ✅ Häkchen im Arbeitsplan = automatisch als Gutachten speichern.
+      ✏️ Bearbeiten aktualisiert beide Tabs (wenn verknüpft).
+    </p>
   </div>
 
+  <!-- Tabs: Arbeitsplan zuerst -->
   <nav class="card">
     <div class="btns" style="margin-top:0">
-      <button id="tabGutachtenBtn" class="btn-outline">💗 Gutachten</button>
       <button id="tabPlanBtn" class="btn-outline">📅 Arbeitsplan</button>
+      <button id="tabGutachtenBtn" class="btn-outline">💗 Gutachten</button>
     </div>
   </nav>
 
-  <!-- ================= GUTACHTEN ================= -->
-  <div id="sectionGutachten">
-    <div class="grid">
-
-      <section class="card">
-        <label for="gutachten">Gutachten</label>
-        <input id="gutachten" placeholder="z.B. Gutachten Nr. 12" />
-
-        <label for="kosten">Kosten (€ max 1000)</label>
-        <input id="kosten" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
-
-        <label for="kategorie">Kategorie</label>
-        <select id="kategorie"></select>
-
-        <label for="klient">Klient</label>
-        <input id="klient" placeholder="optional" />
-
-        <label for="datum">Datum</label>
-        <input id="datum" type="date" />
-
-        <label for="bezahlt">Bezahlt</label>
-        <select id="bezahlt">
-          <option value=""></option>
-          <option value="Ja">Ja</option>
-          <option value="Nein">Nein</option>
-        </select>
-
-        <div class="btns">
-          <button id="saveBtn">💾 Speichern</button>
-          <button id="chartBtn" class="btn-outline">📊 Diagramm</button>
-        </div>
-
-        <div class="small" id="progressLabel">—</div>
-        <div class="bar"><div id="barFill"></div></div>
-      </section>
-
-      <section class="card">
-        <div class="btns" style="margin-top:0">
-          <button id="exportBtn" class="btn-outline">⬇ CSV Export</button>
-          <label class="btn-outline" style="padding:10px 14px;border-radius:12px;cursor:pointer;">
-            ⬆ CSV Import
-            <input type="file" id="importFile" hidden accept=".csv,text/csv">
-          </label>
-          <button id="clearBtn" class="danger">🗑 Alles löschen</button>
-        </div>
-
-        <div class="tableWrap" style="margin-top:12px">
-          <table>
-            <thead>
-              <tr>
-                <th>Datum</th><th>Gutachten</th><th>Kosten (€)</th><th>Kategorie</th><th>Klient</th><th>Bezahlt</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
-        </div>
-
-        <canvas id="chart" height="120" style="display:none;margin-top:14px"></canvas>
-      </section>
-
-    </div>
-  </div>
-
   <!-- ================= ARBEITSPLAN ================= -->
-  <div id="sectionPlan" style="display:none">
+  <div id="sectionPlan">
     <div class="grid">
 
       <section class="card">
         <h3 style="margin:0 0 6px;">📅 Arbeitsplan</h3>
         <p class="sub">
-          Tätigkeit wird beim Übertragen automatisch als <b>Kategorie</b> im Gutachten gespeichert.
-          Zusatzfelder sind immer sichtbar. Kumuliert wird automatisch berechnet.
-          <br>✅ „Erledigt“ anhaken = automatisch speichern & zum Gutachten-Tab wechseln.
+          Tätigkeit = Kategorie im Gutachten. Honorar & Kumuliert werden <b>manuell</b> eingetragen.
+          ✏️ Bearbeiten + Speichern aktualisiert auch das verknüpfte Gutachten.
         </p>
 
         <label for="planDatum">Datum</label>
@@ -190,22 +122,23 @@
           </div>
         </div>
 
-        <label for="planKumuliert">Kumuliertes Honorar (€) (automatisch)</label>
-        <input id="planKumuliert" type="text" disabled placeholder="wird berechnet..." />
+        <label for="planKumuliert">Kumuliertes Honorar (€)</label>
+        <input id="planKumuliert" type="number" step="0.01" min="0" placeholder="z.B. 1200" />
 
         <label for="planNotiz">Notiz</label>
         <input id="planNotiz" placeholder="z.B. Klient/Ort/Infos..." />
 
         <div class="btns">
-          <button id="planSaveBtn">💾 Plan speichern</button>
+          <button id="planSaveBtn">💾 Speichern</button>
+          <button id="planCancelEditBtn" class="btn-outline" style="display:none;">↩︎ Abbrechen</button>
           <button id="planClearBtn" class="danger">🗑 Plan komplett löschen</button>
         </div>
+
+        <div class="small" id="planEditInfo"></div>
       </section>
 
       <section class="card">
-        <div class="btns" style="margin-top:0;justify-content:space-between;align-items:flex-start">
-          <div class="small" id="planStats">—</div>
-        </div>
+        <div class="small" id="planStats" style="margin-top:0;">—</div>
 
         <div class="tableWrap" style="margin-top:12px">
           <table>
@@ -220,12 +153,83 @@
                 <th>Notiz</th>
                 <th>Erledigt ✅</th>
                 <th>Übertragen 💾</th>
+                <th>Bearbeiten ✏️</th>
                 <th>Löschen</th>
               </tr>
             </thead>
             <tbody id="planTbody"></tbody>
           </table>
         </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ================= GUTACHTEN ================= -->
+  <div id="sectionGutachten" style="display:none">
+    <div class="grid">
+
+      <section class="card">
+        <h3 style="margin:0 0 6px;">💗 Gutachten</h3>
+        <p class="sub">✏️ Bearbeiten aktualisiert auch den verknüpften Arbeitsplan-Eintrag (falls vorhanden).</p>
+
+        <label for="gutachten">Gutachten</label>
+        <input id="gutachten" placeholder="z.B. Gutachten Nr. 12" />
+
+        <label for="kosten">Kosten (€ max 1000)</label>
+        <input id="kosten" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
+
+        <label for="kategorie">Kategorie</label>
+        <select id="kategorie"></select>
+
+        <label for="klient">Klient</label>
+        <input id="klient" placeholder="optional" />
+
+        <label for="datum">Datum</label>
+        <input id="datum" type="date" />
+
+        <label for="bezahlt">Bezahlt</label>
+        <select id="bezahlt">
+          <option value=""></option>
+          <option value="Ja">Ja</option>
+          <option value="Nein">Nein</option>
+        </select>
+
+        <div class="btns">
+          <button id="saveBtn">💾 Speichern</button>
+          <button id="gutCancelEditBtn" class="btn-outline" style="display:none;">↩︎ Abbrechen</button>
+          <button id="chartBtn" class="btn-outline">📊 Diagramm</button>
+        </div>
+
+        <div class="small" id="progressLabel">—</div>
+        <div class="bar"><div id="barFill"></div></div>
+
+        <div class="small" id="gutEditInfo"></div>
+      </section>
+
+      <section class="card">
+        <div class="btns" style="margin-top:0">
+          <button id="exportBtn" class="btn-outline">⬇ CSV Export</button>
+          <label class="btn-outline" style="padding:10px 14px;border-radius:12px;cursor:pointer;">
+            ⬆ CSV Import
+            <input type="file" id="importFile" hidden accept=".csv,text/csv">
+          </label>
+          <button id="clearBtn" class="danger">🗑 Alles löschen</button>
+        </div>
+
+        <div class="tableWrap" style="margin-top:12px">
+          <table>
+            <thead>
+              <tr>
+                <th>Datum</th><th>Gutachten</th><th>Kosten (€)</th><th>Kategorie</th><th>Klient</th><th>Bezahlt</th>
+                <th>Bearbeiten ✏️</th><th>Löschen</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <canvas id="chart" height="120" style="display:none;margin-top:14px"></canvas>
       </section>
 
     </div>
@@ -238,10 +242,10 @@
 <script>
   // ================= Konfig =================
   const ZIELBETRAG = 45000;
-  const GKEY = "gutachten_v3";
-  const PKEY = "arbeitsplan_v3";
+  const GKEY = "gutachten_v4";
+  const PKEY = "arbeitsplan_v4";
 
-  // ✅ EINHEITLICHE DROPDOWN-OPTIONEN (Tätigkeit + Kategorie)
+  // Einheitliche Dropdown-Optionen (Tätigkeit + Kategorie)
   const CATEGORY_OPTIONS = ["Gutachten", "Ordination", "BBRZ", "Pause"];
 
   const $ = (id) => document.getElementById(id);
@@ -307,6 +311,14 @@
     selectEl.innerHTML = `<option value=""></option>` + options.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join("");
   }
 
+  function clampMoney(n){
+    const v = Number(n);
+    if(!Number.isFinite(v)) return null;
+    if(v < 0) return null;
+    if(v > 1000) return null;
+    return v;
+  }
+
   // ================= Tabs =================
   const tabGutachtenBtn = $("tabGutachtenBtn");
   const tabPlanBtn = $("tabPlanBtn");
@@ -314,17 +326,53 @@
   const sectionPlan = $("sectionPlan");
 
   function showTab(name){
-    const isGut = name === "gutachten";
-    sectionGutachten.style.display = isGut ? "block" : "none";
-    sectionPlan.style.display = isGut ? "none" : "block";
-    tabGutachtenBtn.classList.toggle("tab-active", isGut);
-    tabPlanBtn.classList.toggle("tab-active", !isGut);
+    const isPlan = name === "plan";
+    sectionPlan.style.display = isPlan ? "block" : "none";
+    sectionGutachten.style.display = isPlan ? "none" : "block";
+    tabPlanBtn.classList.toggle("tab-active", isPlan);
+    tabGutachtenBtn.classList.toggle("tab-active", !isPlan);
   }
-  tabGutachtenBtn.addEventListener("click", ()=>showTab("gutachten"));
   tabPlanBtn.addEventListener("click", ()=>showTab("plan"));
+  tabGutachtenBtn.addEventListener("click", ()=>showTab("gutachten"));
+
+  // ================= Link-Updates (Plan <-> Gutachten) =================
+  function updatePlanFromGutachten(g){
+    // Wenn Gutachten mit planId verknüpft ist, update Plan-Felder (Honorar = Kosten, Tätigkeit = Kategorie, Notiz = Klient, Datum)
+    if(!g.planId) return;
+    const plan = load(PKEY);
+    const idx = plan.findIndex(x=>x.id === g.planId);
+    if(idx < 0) return;
+    plan[idx].Datum = g.Datum || plan[idx].Datum;
+    plan[idx].Taetigkeit = g.Kategorie || plan[idx].Taetigkeit;
+    plan[idx].Notiz = g.Klient || plan[idx].Notiz;
+    // Honorar als Kosten spiegeln
+    plan[idx].Honorar = Number(g.Kosten) || plan[idx].Honorar;
+    // Kumuliert bleibt, weil du es manuell pflegst
+    save(PKEY, plan);
+  }
+
+  function updateGutachtenFromPlan(p){
+    // Wenn Plan übertragen und gutId vorhanden: update Gutachten
+    if(!p.Uebertragen || !p.gutId) return;
+    const guts = load(GKEY);
+    const idx = guts.findIndex(x=>x.id === p.gutId);
+    if(idx < 0) return;
+
+    const gutName = p.GutNr ? `Gutachten Nr. ${p.GutNr}` : (p.Taetigkeit || "Eintrag");
+
+    guts[idx].Datum = p.Datum || guts[idx].Datum;
+    guts[idx].Kategorie = p.Taetigkeit || guts[idx].Kategorie;
+    guts[idx].Klient = p.Notiz || guts[idx].Klient;
+    // Kosten = Honorar pro Eintrag
+    guts[idx].Kosten = Number(p.Honorar) || 0;
+    guts[idx].Gutachten = gutName;
+
+    save(GKEY, guts);
+  }
 
   // ================= Gutachten =================
   let chartInstance = null;
+  let editingGutId = null;
 
   function sumEinnahmen(entries){
     return entries.reduce((acc,e)=> acc + (Number(e.Kosten) || 0), 0);
@@ -352,9 +400,22 @@
           <td>${escapeHtml(e.Kategorie||"")}</td>
           <td>${escapeHtml(e.Klient||"")}</td>
           <td><span class="pill ${paid ? "paid" : "unpaid"}">${escapeHtml(e.Bezahlt||"")}</span></td>
+          <td><button class="btn-outline icon-btn" data-gedit="${escapeHtml(e.id)}" title="Bearbeiten">✏️</button></td>
+          <td><button class="danger icon-btn" data-gdel="${escapeHtml(e.id)}" title="Löschen">🗑</button></td>
         </tr>
       `);
     }
+
+    tb.querySelectorAll('button[data-gedit]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        startEditGutachten(btn.getAttribute("data-gedit"));
+      });
+    });
+    tb.querySelectorAll('button[data-gdel]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        deleteGutachten(btn.getAttribute("data-gdel"));
+      });
+    });
   }
 
   function renderGutachten(){
@@ -363,17 +424,96 @@
     renderProgress(entries);
   }
 
-  function addGutachten(entry){
-    const k = Number(entry.Kosten);
-    if(!Number.isFinite(k)){ alert("Kosten müssen eine Zahl sein."); return false; }
-    if(k > 1000){ alert("Einzelwert darf maximal 1.000 € betragen."); return false; }
-    if(k < 0){ alert("Kosten dürfen nicht negativ sein."); return false; }
+  function addOrUpdateGutachten(entry){
+    const k = clampMoney(entry.Kosten);
+    if(k === null){ alert("Kosten müssen 0–1000 € sein."); return false; }
+    entry.Kosten = k;
 
     const entries = load(GKEY);
-    entries.push(entry);
-    save(GKEY, entries);
+
+    if(editingGutId){
+      const idx = entries.findIndex(x=>x.id === editingGutId);
+      if(idx < 0){ editingGutId = null; return false; }
+
+      const old = entries[idx];
+      entry.id = old.id;
+      entry.planId = old.planId || null; // Link behalten
+
+      entries[idx] = entry;
+      save(GKEY, entries);
+
+      // Link zurück in Plan updaten
+      updatePlanFromGutachten(entry);
+
+      toast("Gutachten aktualisiert.");
+      stopEditGutachten();
+      renderGutachten();
+      renderPlan();
+      return true;
+    }else{
+      entry.id = uid();
+      entry.planId = entry.planId || null;
+      entries.push(entry);
+      save(GKEY, entries);
+      toast("Gutachten gespeichert.");
+      renderGutachten();
+      return true;
+    }
+  }
+
+  function startEditGutachten(id){
+    const entries = load(GKEY);
+    const e = entries.find(x=>x.id === id);
+    if(!e) return;
+
+    editingGutId = id;
+    $("gutachten").value = e.Gutachten || "";
+    $("kosten").value = (Number(e.Kosten)||0);
+    $("kategorie").value = e.Kategorie || "";
+    $("klient").value = e.Klient || "";
+    $("datum").value = e.Datum || todayISO();
+    $("bezahlt").value = e.Bezahlt || "";
+
+    $("gutCancelEditBtn").style.display = "inline-block";
+    $("gutEditInfo").textContent = "✏️ Bearbeiten aktiv – Speichern überschreibt diesen Eintrag.";
+    showTab("gutachten");
+  }
+
+  function stopEditGutachten(){
+    editingGutId = null;
+    $("gutCancelEditBtn").style.display = "none";
+    $("gutEditInfo").textContent = "";
+    $("gutachten").value = "";
+    $("kosten").value = "";
+    $("kategorie").value = "";
+    $("klient").value = "";
+    $("datum").value = todayISO();
+    $("bezahlt").value = "";
+  }
+
+  function deleteGutachten(id){
+    const entries = load(GKEY);
+    const target = entries.find(x=>x.id === id);
+    if(!target) return;
+
+    if(!confirm("Dieses Gutachten wirklich löschen?")) return;
+
+    // Wenn verknüpft: Plan bleibt, aber Uebertragen->false und gutId entfernen
+    if(target.planId){
+      const plan = load(PKEY);
+      const pidx = plan.findIndex(x=>x.id === target.planId);
+      if(pidx >= 0){
+        plan[pidx].Uebertragen = false;
+        plan[pidx].gutId = null;
+        save(PKEY, plan);
+      }
+    }
+
+    save(GKEY, entries.filter(x=>x.id !== id));
+    if(editingGutId === id) stopEditGutachten();
+    toast("Gutachten gelöscht.");
     renderGutachten();
-    return true;
+    renderPlan();
   }
 
   $("saveBtn").addEventListener("click", ()=>{
@@ -383,17 +523,16 @@
       Kosten: Number($("kosten").value),
       Kategorie: $("kategorie").value.trim(),
       Klient: $("klient").value.trim(),
-      Bezahlt: $("bezahlt").value.trim()
+      Bezahlt: $("bezahlt").value.trim(),
+      // planId bleibt bei edit automatisch drin; beim manuellen neu speichern nicht verknüpft
+      planId: null
     };
-    if(addGutachten(entry)){
-      $("gutachten").value = "";
-      $("kosten").value = "";
-      $("kategorie").value = "";
-      $("klient").value = "";
-      $("datum").value = "";
-      $("bezahlt").value = "";
-      toast("Gutachten gespeichert.");
-    }
+    addOrUpdateGutachten(entry);
+  });
+
+  $("gutCancelEditBtn").addEventListener("click", ()=>{
+    stopEditGutachten();
+    toast("Bearbeiten abgebrochen.");
   });
 
   function monthlyAggregate(entries){
@@ -416,11 +555,8 @@
     chartInstance = new Chart(canvas, {
       type:"bar",
       data:{ labels, datasets:[{ label:"Einnahmen (€)", data:sums }] },
-      options:{
-        responsive:true,
-        plugins:{ title:{ display:true, text:"Monatliche Einnahmen Übersicht" } },
-        scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
-      }
+      options:{ responsive:true, plugins:{ title:{ display:true, text:"Monatliche Einnahmen Übersicht" } },
+        scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
     });
     if(labels.length === 0) toast("Noch keine Daten fürs Monatsdiagramm.");
   });
@@ -496,17 +632,21 @@
         for(let r=1;r<rows.length;r++){
           const cols=rows[r];
           const Kosten = Number(String(cols[iKos]||"").replace(",","."));
-          if(!Number.isFinite(Kosten) || Kosten<0 || Kosten>1000) continue;
+          const k = clampMoney(Kosten);
+          if(k === null) continue;
           entries.push({
+            id: uid(),
+            planId: null,
             Datum:(cols[iDatum]||"").trim() || todayISO(),
             Gutachten:(cols[iGut]||"").trim(),
-            Kosten,
+            Kosten: k,
             Kategorie:(cols[iKat]||"").trim(),
             Klient:(cols[iKli]||"").trim(),
             Bezahlt:(cols[iBez]||"").trim()
           });
         }
         save(GKEY, entries);
+        stopEditGutachten();
         renderGutachten();
         toast(`CSV importiert (${entries.length} Einträge).`);
       }catch(err){
@@ -522,12 +662,16 @@
       localStorage.removeItem(GKEY);
       if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
       $("chart").style.display="none";
+      stopEditGutachten();
       renderGutachten();
+      renderPlan();
       toast("Alles gelöscht.");
     }
   });
 
   // ================= Arbeitsplan =================
+  let editingPlanId = null;
+
   function planSorted(items){
     return [...items].sort((a,b)=>{
       const d = (a.Datum||"").localeCompare(b.Datum||"");
@@ -536,39 +680,17 @@
     });
   }
 
-  function computeKumuliert(sorted){
-    let sum = 0;
-    const out = [];
-    for(const it of sorted){
-      sum += Number(it.Honorar) || 0; // ✅ kumuliert jetzt über ALLE Tätigkeiten (wie Standard)
-      out.push({ ...it, Kumuliert: sum });
-    }
-    return out;
-  }
-
-  function refreshPlanKumuliertPreview(){
-    const items = planSorted(load(PKEY));
-    const withCum = computeKumuliert(items);
-    const currentCum = withCum.length ? (withCum[withCum.length-1].Kumuliert || 0) : 0;
-    const add = Number($("planHonorar").value) || 0;
-    $("planKumuliert").value = fmtEuro(currentCum + add);
-  }
-
-  $("planHonorar").addEventListener("input", refreshPlanKumuliertPreview);
-
   function renderPlan(){
     const items = planSorted(load(PKEY));
-    const withCum = computeKumuliert(items);
-
-    const total = withCum.length;
-    const done = withCum.filter(x=>x.Erledigt).length;
-    const transferred = withCum.filter(x=>x.Uebertragen).length;
+    const total = items.length;
+    const done = items.filter(x=>x.Erledigt).length;
+    const transferred = items.filter(x=>x.Uebertragen).length;
     $("planStats").textContent = `Einträge: ${total} | Erledigt: ${done} | Übertragen: ${transferred}`;
 
     const tb = $("planTbody");
     tb.innerHTML = "";
 
-    for(const it of withCum){
+    for(const it of items){
       const hasTransfer = !!it.Uebertragen;
       const transferTag = hasTransfer
         ? `<span class="pill tag-ok">✓ gespeichert</span>`
@@ -588,6 +710,7 @@
             <button class="btn-outline icon-btn" data-xfer="${escapeHtml(it.id)}" ${hasTransfer ? "disabled" : ""} title="Als Gutachten speichern">💾</button>
             <span style="margin-left:8px">${transferTag}</span>
           </td>
+          <td><button class="btn-outline icon-btn" data-pedit="${escapeHtml(it.id)}" title="Bearbeiten">✏️</button></td>
           <td><button class="danger icon-btn" data-del="${escapeHtml(it.id)}" title="Löschen">🗑</button></td>
         </tr>
       `);
@@ -607,50 +730,108 @@
       });
     });
 
-    tb.querySelectorAll('button[data-del]').forEach(btn=>{
+    tb.querySelectorAll('button[data-pedit]').forEach(btn=>{
       btn.addEventListener("click", ()=>{
-        const id = btn.getAttribute("data-del");
-        planDelete(id);
+        startEditPlan(btn.getAttribute("data-pedit"));
       });
     });
 
-    refreshPlanKumuliertPreview();
+    tb.querySelectorAll('button[data-del]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        planDelete(btn.getAttribute("data-del"));
+      });
+    });
   }
 
-  function planSave(){
-    const Taetigkeit = ($("planTaetigkeit").value || "").trim();
-    if(!Taetigkeit){ alert("Bitte Tätigkeit auswählen."); return; }
-
-    const Honorar = Number($("planHonorar").value || 0);
-    if(!Number.isFinite(Honorar)){ alert("Honorar muss eine Zahl sein."); return; }
-    if(Honorar < 0 || Honorar > 1000){ alert("Honorar muss zwischen 0 und 1000 € liegen."); return; }
-
-    const item = {
-      id: uid(),
-      Datum: $("planDatum").value || todayISO(),
-      Von: $("planVon").value || "",
-      Bis: $("planBis").value || "",
-      Taetigkeit,
-      GutNr: $("planGutNr").value.trim(),
-      Honorar,
-      Notiz: $("planNotiz").value.trim(),
-      Erledigt: false,
-      Uebertragen: false
-    };
-
+  function startEditPlan(id){
     const items = load(PKEY);
-    items.push(item);
-    save(PKEY, items);
+    const it = items.find(x=>x.id === id);
+    if(!it) return;
 
+    editingPlanId = id;
+
+    $("planDatum").value = it.Datum || todayISO();
+    $("planVon").value = it.Von || "";
+    $("planBis").value = it.Bis || "";
+    $("planTaetigkeit").value = it.Taetigkeit || "";
+    $("planGutNr").value = it.GutNr || "";
+    $("planHonorar").value = (Number(it.Honorar)||0);
+    $("planKumuliert").value = (Number(it.Kumuliert)||0);
+    $("planNotiz").value = it.Notiz || "";
+
+    $("planCancelEditBtn").style.display = "inline-block";
+    $("planEditInfo").textContent = "✏️ Bearbeiten aktiv – Speichern überschreibt diesen Eintrag (und ggf. das verknüpfte Gutachten).";
+    showTab("plan");
+  }
+
+  function stopEditPlan(){
+    editingPlanId = null;
+    $("planCancelEditBtn").style.display = "none";
+    $("planEditInfo").textContent = "";
+    $("planDatum").value = todayISO();
     $("planVon").value = "";
     $("planBis").value = "";
     $("planTaetigkeit").value = "";
     $("planGutNr").value = "";
     $("planHonorar").value = "";
+    $("planKumuliert").value = "";
     $("planNotiz").value = "";
-    $("planDatum").value = todayISO();
+  }
+
+  function planSaveOrUpdate(){
+    const Taetigkeit = ($("planTaetigkeit").value || "").trim();
+    if(!Taetigkeit){ alert("Bitte Tätigkeit auswählen."); return; }
+
+    const Honorar = clampMoney($("planHonorar").value || 0);
+    if(Honorar === null){ alert("Honorar muss 0–1000 € sein."); return; }
+
+    const Kum = Number($("planKumuliert").value || 0);
+    if(!Number.isFinite(Kum) || Kum < 0){ alert("Kumuliertes Honorar muss >= 0 sein."); return; }
+
+    const item = {
+      id: editingPlanId || uid(),
+      Datum: $("planDatum").value || todayISO(),
+      Von: $("planVon").value || "",
+      Bis: $("planBis").value || "",
+      Taetigkeit,
+      GutNr: $("planGutNr").value.trim(),
+      Honorar: Honorar,
+      Kumuliert: Kum,
+      Notiz: $("planNotiz").value.trim(),
+      Erledigt: false,
+      Uebertragen: false,
+      gutId: null
+    };
+
+    const items = load(PKEY);
+
+    if(editingPlanId){
+      const idx = items.findIndex(x=>x.id === editingPlanId);
+      if(idx < 0){ stopEditPlan(); return; }
+
+      // Status behalten
+      item.Erledigt = !!items[idx].Erledigt;
+      item.Uebertragen = !!items[idx].Uebertragen;
+      item.gutId = items[idx].gutId || null;
+
+      items[idx] = item;
+      save(PKEY, items);
+
+      // Wenn bereits übertragen: Gutachten aktualisieren
+      updateGutachtenFromPlan(item);
+
+      toast("Arbeitsplan aktualisiert.");
+      stopEditPlan();
+      renderPlan();
+      renderGutachten();
+      return;
+    }
+
+    items.push(item);
+    save(PKEY, items);
 
     toast("Arbeitsplan gespeichert.");
+    stopEditPlan();
     renderPlan();
   }
 
@@ -663,25 +844,49 @@
     save(PKEY, items);
     renderPlan();
 
-    // ✅ wenn erledigt: automatisch übertragen (falls nicht schon)
+    // Wenn erledigt und noch nicht übertragen -> automatisch übertragen
     if(done && !items[idx].Uebertragen){
       transferPlanToGutachten(id, { switchTab:true, autoDone:false });
     }
   }
 
   function planDelete(id){
-    const items = load(PKEY).filter(x=>x.id !== id);
-    save(PKEY, items);
+    const items = load(PKEY);
+    const target = items.find(x=>x.id === id);
+    if(!target) return;
+
+    if(!confirm("Diesen Arbeitsplan-Eintrag wirklich löschen?")) return;
+
+    // Falls verknüpftes Gutachten existiert: auch löschen?
+    // Ich mache es "sicher": Plan löschen -> Gutachten bleibt, aber Link wird entfernt.
+    if(target.gutId){
+      const guts = load(GKEY);
+      const gidx = guts.findIndex(x=>x.id === target.gutId);
+      if(gidx >= 0){
+        guts[gidx].planId = null;
+        save(GKEY, guts);
+      }
+    }
+
+    save(PKEY, items.filter(x=>x.id !== id));
+    if(editingPlanId === id) stopEditPlan();
     toast("Plan-Eintrag gelöscht.");
     renderPlan();
+    renderGutachten();
   }
 
-  $("planSaveBtn").addEventListener("click", planSave);
+  $("planSaveBtn").addEventListener("click", planSaveOrUpdate);
+  $("planCancelEditBtn").addEventListener("click", ()=>{
+    stopEditPlan();
+    toast("Bearbeiten abgebrochen.");
+  });
+
   $("planClearBtn").addEventListener("click", ()=>{
     if(confirm("Wirklich den kompletten Arbeitsplan löschen?")){
       localStorage.removeItem(PKEY);
-      toast("Arbeitsplan gelöscht.");
+      stopEditPlan();
       renderPlan();
+      toast("Arbeitsplan gelöscht.");
     }
   });
 
@@ -697,39 +902,49 @@
 
     const gutName = it.GutNr ? `Gutachten Nr. ${it.GutNr}` : (it.Taetigkeit || "Eintrag");
     const entry = {
+      id: uid(),
+      planId: it.id,
       Datum: it.Datum || todayISO(),
       Gutachten: gutName,
       Kosten: Number(it.Honorar) || 0,
-      Kategorie: it.Taetigkeit || "",     // ✅ Tätigkeit = Kategorie
+      Kategorie: it.Taetigkeit || "",
       Klient: it.Notiz || "",
       Bezahlt: ""
     };
 
-    if(!addGutachten(entry)) return;
+    // Kosten prüfen
+    const k = clampMoney(entry.Kosten);
+    if(k === null){ alert("Honorar muss 0–1000 € sein."); return; }
+    entry.Kosten = k;
+
+    const guts = load(GKEY);
+    guts.push(entry);
+    save(GKEY, guts);
 
     plan[idx].Uebertragen = true;
+    plan[idx].gutId = entry.id;
     if(autoDone) plan[idx].Erledigt = true;
     save(PKEY, plan);
 
     renderPlan();
+    renderGutachten();
     toast("Als Gutachten gespeichert.");
 
-    if(switchTab){
-      showTab("gutachten");
-    }
+    if(switchTab) showTab("gutachten");
   }
 
   // ================= Init =================
-  // Dropdowns füllen (einheitlich)
   fillSelect($("kategorie"), CATEGORY_OPTIONS);
   fillSelect($("planTaetigkeit"), CATEGORY_OPTIONS);
 
   $("datum").value = todayISO();
   $("planDatum").value = todayISO();
-  showTab("gutachten");
-  renderGutachten();
+
+  // Start: Arbeitsplan zuerst
+  showTab("plan");
+
   renderPlan();
-  refreshPlanKumuliertPreview();
+  renderGutachten();
 </script>
 </body>
 </html>
