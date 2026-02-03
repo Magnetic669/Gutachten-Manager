@@ -1,380 +1,795 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>💗 Gutachten Manager Deluxe</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💗 Gutachten Manager Deluxe</title>
+  <meta name="theme-color" content="#ff69b4" />
 
-<meta name="theme-color" content="#ff69b4">
+  <style>
+    :root{
+      --pink:#ff69b4;
+      --pink2:#ffb6c1;
+      --bg:#ffe6f0;
+      --card:#fff;
+      --border:rgba(0,0,0,.10);
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+      --radius:18px;
+      --muted:#666;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background: radial-gradient(1200px 600px at 10% 0%, #fff 0%, var(--bg) 45%, #ffd6ea 100%);
+    }
+    .wrap{max-width:1250px;margin:20px auto;padding:15px;}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px;border:1px solid var(--border);}
+    h1{margin:0 0 6px;font-size:22px}
+    .sub{color:var(--muted);font-size:13px;margin:0;line-height:1.35}
+    .grid{display:grid;gap:14px;}
+    @media(min-width:980px){.grid{grid-template-columns:390px 1fr}}
+    label{font-size:12px;color:var(--muted);display:block;margin-top:10px;margin-bottom:6px}
+    input,select{
+      width:100%;padding:10px 11px;border-radius:12px;border:1px solid var(--border);
+      background:#fff;outline:none;
+    }
+    input:focus,select:focus{box-shadow:0 0 0 4px rgba(255,105,180,.14);border-color:rgba(255,105,180,.6)}
+    button{
+      border:0;border-radius:12px;padding:10px 14px;font-weight:650;cursor:pointer;background:var(--pink2);
+    }
+    button:hover{filter:brightness(.96)}
+    .btn-outline{background:#fff;border:1px solid var(--border);font-weight:650}
+    .danger{background:#fff;border:1px solid rgba(200,60,60,.35);color:#8b1f1f}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}
 
-<style>
-:root{
-  --pink:#ff69b4;
-  --pink2:#ffb6c1;
-  --bg:#ffe6f0;
-  --card:#fff;
-  --border:rgba(0,0,0,.1);
-  --shadow:0 10px 25px rgba(0,0,0,.08);
-  --radius:18px;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto;
-  background:var(--bg);
-}
-.wrap{
-  max-width:1100px;
-  margin:20px auto;
-  padding:15px;
-}
-.card{
-  background:var(--card);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:16px;
-  margin-bottom:14px;
-}
-h1{margin:0 0 6px;font-size:22px}
-.sub{color:#666;font-size:13px;margin:0}
+    .tableWrap{overflow:auto;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:rgba(255,255,255,.75)}
+    table{width:100%;border-collapse:collapse;min-width:1150px}
+    th,td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06);font-size:13px;white-space:nowrap;text-align:left}
+    th{background:rgba(250,250,250,.95);position:sticky;top:0;z-index:1;color:var(--muted);font-size:12px}
 
-.grid{
-  display:grid;
-  gap:14px;
-}
-@media(min-width:900px){
-  .grid{grid-template-columns:380px 1fr}
-}
+    .pill{padding:3px 8px;border-radius:999px;border:1px solid rgba(0,0,0,.12);font-size:12px;background:#fff}
+    .paid{background:#e7f8ee;border-color:#8ccfa6}
+    .unpaid{background:#fdeaea;border-color:#e6a0a0}
+    .tag-ok{background:#e7f8ee;border-color:#8ccfa6}
+    .tag-warn{background:#fdeaea;border-color:#e6a0a0}
 
-label{font-size:12px;color:#666}
-input,select{
-  width:100%;
-  padding:10px;
-  border-radius:12px;
-  border:1px solid var(--border);
-}
-button{
-  border:0;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:600;
-  cursor:pointer;
-  background:var(--pink2);
-}
-button:hover{filter:brightness(.95)}
-.btn-outline{
-  background:#fff;
-  border:1px solid var(--border);
-}
-.danger{
-  border:1px solid #c55;
-  color:#922;
-  background:#fff;
-}
-.btns{display:flex;gap:10px;flex-wrap:wrap}
+    .bar{height:14px;background:rgba(0,0,0,.08);border-radius:999px;overflow:hidden;margin-top:8px}
+    .bar div{height:100%;background:linear-gradient(90deg,#ff9acb,var(--pink));width:0%}
 
-.tableWrap{overflow:auto}
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:900px;
-}
-th,td{
-  padding:8px;
-  border-bottom:1px solid #eee;
-  font-size:13px;
-  white-space:nowrap;
-}
-th{background:#fafafa}
+    nav button.tab-active{background:linear-gradient(90deg,#ff9acb,var(--pink))}
+    .toast{
+      position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+      background:#fff;border:1px solid var(--border);padding:10px 14px;border-radius:999px;
+      box-shadow:var(--shadow);display:none;z-index:20;
+    }
+    .toast.show{display:block}
+    .icon-btn{padding:8px 10px;border-radius:10px}
+  </style>
 
-.pill{
-  padding:3px 8px;
-  border-radius:999px;
-  border:1px solid #ccc;
-  font-size:12px;
-}
-.paid{background:#e7f8ee;border-color:#8ccfa6}
-.unpaid{background:#fdeaea;border-color:#e6a0a0}
-
-.bar{
-  height:14px;
-  background:#eee;
-  border-radius:999px;
-  overflow:hidden;
-}
-.bar div{
-  height:100%;
-  background:linear-gradient(90deg,#ff9acb,var(--pink));
-}
-
-nav button.tab-active{
-  background:linear-gradient(90deg,#ff9acb,var(--pink));
-}
-
-.toast{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#fff;
-  border:1px solid var(--border);
-  padding:10px 14px;
-  border-radius:999px;
-  box-shadow:var(--shadow);
-  display:none;
-}
-.toast.show{display:block}
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
 <div class="wrap">
 
-<div class="card">
-<h1>💗 Gutachten Manager Deluxe</h1>
-<p class="sub">Gutachten + Arbeitsplan – alles lokal gespeichert</p>
-</div>
+  <div class="card">
+    <h1>💗 Gutachten Manager Deluxe</h1>
+    <p class="sub">Gutachten + Arbeitsplan – alles lokal gespeichert (localStorage)</p>
+  </div>
 
-<nav class="card">
-<div class="btns">
-<button id="tabGutachtenBtn" class="btn-outline">💗 Gutachten</button>
-<button id="tabPlanBtn" class="btn-outline">📅 Arbeitsplan</button>
-</div>
-</nav>
+  <nav class="card">
+    <div class="btns" style="margin-top:0">
+      <button id="tabGutachtenBtn" class="btn-outline">💗 Gutachten</button>
+      <button id="tabPlanBtn" class="btn-outline">📅 Arbeitsplan</button>
+    </div>
+  </nav>
 
-<!-- ================= GUTACHTEN ================= -->
-<div id="sectionGutachten">
+  <!-- ================= GUTACHTEN ================= -->
+  <div id="sectionGutachten">
+    <div class="grid">
 
-<div class="grid">
+      <section class="card">
+        <label for="gutachten">Gutachten</label>
+        <input id="gutachten" placeholder="z.B. Gutachten Nr. 12" />
 
-<section class="card">
-<label>Gutachten</label>
-<input id="gutachten">
+        <label for="kosten">Kosten (€ max 1000)</label>
+        <input id="kosten" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
 
-<label>Kosten (€ max 1000)</label>
-<input id="kosten" type="number">
+        <label for="kategorie">Kategorie</label>
+        <select id="kategorie">
+          <option value=""></option>
+          <option value="BBRZ">BBRZ</option>
+          <option value="Ordination">Ordination</option>
+        </select>
 
-<label>Kategorie</label>
-<select id="kategorie">
-<option></option>
-<option>BBRZ</option>
-<option>Ordination</option>
-</select>
+        <label for="klient">Klient</label>
+        <input id="klient" placeholder="optional" />
 
-<label>Klient</label>
-<input id="klient">
+        <label for="datum">Datum</label>
+        <input id="datum" type="date" />
 
-<label>Datum</label>
-<input id="datum" type="date">
+        <label for="bezahlt">Bezahlt</label>
+        <select id="bezahlt">
+          <option value=""></option>
+          <option value="Ja">Ja</option>
+          <option value="Nein">Nein</option>
+        </select>
 
-<label>Bezahlt</label>
-<select id="bezahlt">
-<option></option>
-<option>Ja</option>
-<option>Nein</option>
-</select>
+        <div class="btns">
+          <button id="saveBtn">💾 Speichern</button>
+          <button id="chartBtn" class="btn-outline">📊 Diagramm</button>
+        </div>
 
-<div class="btns">
-<button id="saveBtn">💾 Speichern</button>
-<button id="chartBtn" class="btn-outline">📊 Diagramm</button>
-</div>
+        <div class="small" id="progressLabel">—</div>
+        <div class="bar"><div id="barFill"></div></div>
+      </section>
 
-<p id="progressLabel"></p>
-<div class="bar"><div id="barFill"></div></div>
-</section>
+      <section class="card">
+        <div class="btns" style="margin-top:0">
+          <button id="exportBtn" class="btn-outline">⬇ CSV Export</button>
+          <label class="btn-outline" style="padding:10px 14px;border-radius:12px;cursor:pointer;">
+            ⬆ CSV Import
+            <input type="file" id="importFile" hidden accept=".csv,text/csv">
+          </label>
+          <button id="clearBtn" class="danger">🗑 Alles löschen</button>
+        </div>
 
-<section class="card">
-<div class="btns">
-<button id="exportBtn" class="btn-outline">⬇ CSV</button>
-<label class="btn-outline">
-⬆ CSV
-<input type="file" id="importFile" hidden>
-</label>
-<button id="clearBtn" class="danger">🗑 Alles löschen</button>
-</div>
+        <div class="tableWrap" style="margin-top:12px">
+          <table>
+            <thead>
+              <tr>
+                <th>Datum</th><th>Gutachten</th><th>Kosten (€)</th><th>Kategorie</th><th>Klient</th><th>Bezahlt</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
 
-<div class="tableWrap">
-<table>
-<thead>
-<tr>
-<th>Datum</th><th>Gutachten</th><th>Kosten</th><th>Kategorie</th><th>Klient</th><th>Bezahlt</th>
-</tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
-</div>
+        <canvas id="chart" height="120" style="display:none;margin-top:14px"></canvas>
+      </section>
 
-<canvas id="chart" height="120" style="display:none"></canvas>
-</section>
+    </div>
+  </div>
 
-</div>
-</div>
+  <!-- ================= ARBEITSPLAN ================= -->
+  <div id="sectionPlan" style="display:none">
+    <div class="grid">
 
-<!-- ================= ARBEITSPLAN ================= -->
-<div id="sectionPlan" style="display:none">
+      <section class="card">
+        <h3 style="margin:0 0 6px;">📅 Arbeitsplan</h3>
+        <p class="sub">
+          Zusatzfelder nur für Gutachten: <b>Gutachten-Nr.</b>, <b>Honorar</b>, <b>Kumuliert</b> (automatisch).
+          <br>✅ Wenn du „Erledigt“ anhakst, wird es automatisch im Tab „Gutachten“ gespeichert und dorthin gewechselt.
+        </p>
 
-<div class="grid">
+        <label for="planDatum">Datum</label>
+        <input id="planDatum" type="date" />
 
-<section class="card">
-<label>Datum</label>
-<input id="planDatum" type="date">
+        <div class="row2">
+          <div>
+            <label for="planVon">Von</label>
+            <input id="planVon" type="time" />
+          </div>
+          <div>
+            <label for="planBis">Bis</label>
+            <input id="planBis" type="time" />
+          </div>
+        </div>
 
-<label>Von</label>
-<input id="planVon" type="time">
+        <label for="planTaetigkeit">Tätigkeit</label>
+        <select id="planTaetigkeit">
+          <option value=""></option>
+          <option value="Gutachten">Gutachten</option>
+          <option value="Ordination">Ordination</option>
+          <option value="BBRZ">BBRZ</option>
+          <option value="Frei">Frei</option>
+        </select>
 
-<label>Bis</label>
-<input id="planBis" type="time">
+        <div id="gutFields" style="display:none;">
+          <div class="row2">
+            <div>
+              <label for="planGutNr">Gutachten-Nr.</label>
+              <input id="planGutNr" placeholder="z.B. 12" />
+            </div>
+            <div>
+              <label for="planHonorar">Honorar pro Gutachten (€)</label>
+              <input id="planHonorar" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
+            </div>
+          </div>
 
-<label>Tätigkeit</label>
-<select id="planTaetigkeit">
-<option></option>
-<option>Gutachten</option>
-<option>Ordination</option>
-<option>BBRZ</option>
-<option>Frei</option>
-</select>
+          <label for="planKumuliert">Kumuliertes Honorar (€) (automatisch)</label>
+          <input id="planKumuliert" type="text" disabled placeholder="wird berechnet..." />
+        </div>
 
-<label>Notiz</label>
-<input id="planNotiz">
+        <label for="planNotiz">Notiz</label>
+        <input id="planNotiz" placeholder="z.B. Klient/Ort/Infos..." />
 
-<div class="btns">
-<button id="planSaveBtn">💾 Plan speichern</button>
-<button id="planClearBtn" class="danger">🗑 Plan löschen</button>
-</div>
-</section>
+        <div class="btns">
+          <button id="planSaveBtn">💾 Plan speichern</button>
+          <button id="planClearBtn" class="danger">🗑 Plan komplett löschen</button>
+        </div>
+      </section>
 
-<section class="card">
-<p id="planStats"></p>
-<div class="tableWrap">
-<table>
-<thead>
-<tr>
-<th>Datum</th><th>Zeit</th><th>Tätigkeit</th><th>Notiz</th><th>✔</th><th>Aktion</th>
-</tr>
-</thead>
-<tbody id="planTbody"></tbody>
-</table>
-</div>
-</section>
+      <section class="card">
+        <div class="btns" style="margin-top:0;justify-content:space-between;align-items:flex-start">
+          <div class="small" id="planStats">—</div>
+        </div>
 
-</div>
-</div>
+        <div class="tableWrap" style="margin-top:12px">
+          <table>
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Zeit</th>
+                <th>Tätigkeit</th>
+                <th>Gutachten-Nr.</th>
+                <th>Honorar (€)</th>
+                <th>Kumuliert (€)</th>
+                <th>Notiz</th>
+                <th>Erledigt ✅</th>
+                <th>Übertragen 💾</th>
+                <th>Löschen</th>
+              </tr>
+            </thead>
+            <tbody id="planTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
 
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
-const ZIEL=45000;
-const GKEY="gutachten_v1";
-const PKEY="plan_v1";
-const $=id=>document.getElementById(id);
-const toast=t=>{const x=$("toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2000)}
+  // ================= Helpers =================
+  const ZIELBETRAG = 45000;
+  const GKEY = "gutachten_v2";
+  const PKEY = "arbeitsplan_v2";
 
-function today(){return new Date().toISOString().slice(0,10)}
+  const $ = (id) => document.getElementById(id);
 
-function load(k){return JSON.parse(localStorage.getItem(k)||"[]")}
-function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+  function todayISO(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
-function renderGut(){
-const d=load(GKEY);
-$("tbody").innerHTML="";
-let sum=0;
-d.forEach(e=>{
-sum+=+e.Kosten||0;
-$("tbody").innerHTML+=`<tr>
-<td>${e.Datum}</td><td>${e.Gutachten}</td><td>${e.Kosten}</td>
-<td>${e.Kategorie}</td><td>${e.Klient}</td>
-<td><span class="pill ${e.Bezahlt=="Ja"?"paid":"unpaid"}">${e.Bezahlt}</span></td></tr>`
-});
-const p=Math.min(100,Math.floor(sum/ZIEL*100));
-$("progressLabel").textContent=`${sum} € / 45.000 € (${p}%)`;
-$("barFill").style.width=p+"%";
-}
+  function toast(msg){
+    const el = $("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>el.classList.remove("show"), 2200);
+  }
 
-$("saveBtn").onclick=()=>{
-const e={
-Gutachten:$("gutachten").value,
-Kosten:+$("kosten").value,
-Kategorie:$("kategorie").value,
-Klient:$("klient").value,
-Datum:$("datum").value||today(),
-Bezahlt:$("bezahlt").value
-};
-if(e.Kosten>1000)return alert("Max 1000 €");
-const d=load(GKEY);d.push(e);save(GKEY,d);
-toast("Gespeichert");
-renderGut();
-};
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
 
-function renderPlan(){
-const p=load(PKEY);
-$("planTbody").innerHTML="";
-let done=0;
-p.forEach(i=>{
-if(i.done)done++;
-$("planTbody").innerHTML+=`<tr>
-<td>${i.d}</td>
-<td>${i.v}-${i.b}</td>
-<td>${i.t}</td>
-<td>${i.n}</td>
-<td><input type="checkbox" ${i.done?"checked":""}
-onchange="toggleDone('${i.id}')"></td>
-<td>
-${i.t=="Gutachten"?`<button onclick="mkGut('${i.id}')">→ Gutachten</button>`:""}
-<button class="danger" onclick="delPlan('${i.id}')">X</button>
-</td></tr>`
-});
-$("planStats").textContent=`${p.length} Einträge | ${done} erledigt`;
-}
+  function load(key){
+    try{
+      const raw = localStorage.getItem(key);
+      if(!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    }catch{
+      return [];
+    }
+  }
+  function save(key, arr){
+    localStorage.setItem(key, JSON.stringify(arr));
+  }
 
-$("planSaveBtn").onclick=()=>{
-const i={
-id:Math.random(),
-d:$("planDatum").value||today(),
-v:$("planVon").value,
-b:$("planBis").value,
-t:$("planTaetigkeit").value,
-n:$("planNotiz").value,
-done:false
-};
-if(!i.t)return alert("Tätigkeit fehlt");
-const p=load(PKEY);p.push(i);save(PKEY,p);
-toast("Plan gespeichert");renderPlan();
-};
+  function uid(){
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
 
-function toggleDone(id){
-const p=load(PKEY);
-p.find(x=>x.id==id).done^=1;
-save(PKEY,p);renderPlan();
-}
-function delPlan(id){
-save(PKEY,load(PKEY).filter(x=>x.id!=id));
-renderPlan();
-}
-function mkGut(id){
-const i=load(PKEY).find(x=>x.id==id);
-$("gutachten").value=i.t;
-$("klient").value=i.n;
-$("datum").value=i.d;
-show("gut");
-}
+  function fmtEuro(n){
+    const v = Number(n) || 0;
+    return v.toLocaleString("de-AT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
 
-function show(w){
-$("sectionGutachten").style.display=w=="gut"?"block":"none";
-$("sectionPlan").style.display=w=="plan"?"block":"none";
-$("tabGutachtenBtn").classList.toggle("tab-active",w=="gut");
-$("tabPlanBtn").classList.toggle("tab-active",w=="plan");
-}
+  function timeRange(von,bis){
+    const a = (von||"").trim();
+    const b = (bis||"").trim();
+    if(!a && !b) return "";
+    if(a && b) return `${a}–${b}`;
+    return a || b;
+  }
 
-$("tabGutachtenBtn").onclick=()=>show("gut");
-$("tabPlanBtn").onclick=()=>show("plan");
+  // ================= Tabs =================
+  const tabGutachtenBtn = $("tabGutachtenBtn");
+  const tabPlanBtn = $("tabPlanBtn");
+  const sectionGutachten = $("sectionGutachten");
+  const sectionPlan = $("sectionPlan");
 
-$("datum").value=today();
-$("planDatum").value=today();
-renderGut();renderPlan();show("gut");
+  function showTab(name){
+    const isGut = name === "gutachten";
+    sectionGutachten.style.display = isGut ? "block" : "none";
+    sectionPlan.style.display = isGut ? "none" : "block";
+    tabGutachtenBtn.classList.toggle("tab-active", isGut);
+    tabPlanBtn.classList.toggle("tab-active", !isGut);
+  }
+  tabGutachtenBtn.addEventListener("click", ()=>showTab("gutachten"));
+  tabPlanBtn.addEventListener("click", ()=>showTab("plan"));
+
+  // ================= Gutachten =================
+  let chartInstance = null;
+
+  function sumEinnahmen(entries){
+    return entries.reduce((acc,e)=> acc + (Number(e.Kosten) || 0), 0);
+  }
+
+  function renderProgress(entries){
+    const einnahmen = sumEinnahmen(entries);
+    const prozent = Math.min(Math.floor((einnahmen / ZIELBETRAG) * 100), 100);
+    $("progressLabel").textContent =
+      `Einnahmen: ${fmtEuro(einnahmen)} € / 45.000 € | Gutachten: ${entries.length} | ${prozent}% erreicht`;
+    $("barFill").style.width = `${Math.max(0, Math.min(100, prozent))}%`;
+  }
+
+  function renderGutTable(entries){
+    const tb = $("tbody");
+    tb.innerHTML = "";
+    const sorted = [...entries].sort((a,b)=> (b.Datum||"").localeCompare(a.Datum||""));
+    for(const e of sorted){
+      const paid = (e.Bezahlt||"") === "Ja";
+      tb.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td>${escapeHtml(e.Datum||"")}</td>
+          <td>${escapeHtml(e.Gutachten||"")}</td>
+          <td>${escapeHtml(fmtEuro(e.Kosten))}</td>
+          <td>${escapeHtml(e.Kategorie||"")}</td>
+          <td>${escapeHtml(e.Klient||"")}</td>
+          <td><span class="pill ${paid ? "paid" : "unpaid"}">${escapeHtml(e.Bezahlt||"")}</span></td>
+        </tr>
+      `);
+    }
+  }
+
+  function renderGutachten(){
+    const entries = load(GKEY);
+    renderGutTable(entries);
+    renderProgress(entries);
+  }
+
+  function addGutachten(entry){
+    // Validierung max 1000
+    const k = Number(entry.Kosten);
+    if(!Number.isFinite(k)){
+      alert("Kosten müssen eine Zahl sein.");
+      return false;
+    }
+    if(k > 1000){
+      alert("Einzelwert darf maximal 1.000 € betragen.");
+      return false;
+    }
+    if(k < 0){
+      alert("Kosten dürfen nicht negativ sein.");
+      return false;
+    }
+
+    const entries = load(GKEY);
+    entries.push(entry);
+    save(GKEY, entries);
+    renderGutachten();
+    return true;
+  }
+
+  $("saveBtn").addEventListener("click", ()=>{
+    const entry = {
+      Datum: $("datum").value || todayISO(),
+      Gutachten: $("gutachten").value.trim(),
+      Kosten: Number($("kosten").value),
+      Kategorie: $("kategorie").value.trim(),
+      Klient: $("klient").value.trim(),
+      Bezahlt: $("bezahlt").value.trim()
+    };
+    if(addGutachten(entry)){
+      $("gutachten").value = "";
+      $("kosten").value = "";
+      $("kategorie").value = "";
+      $("klient").value = "";
+      $("datum").value = "";
+      $("bezahlt").value = "";
+      toast("Gutachten gespeichert.");
+    }
+  });
+
+  function monthlyAggregate(entries){
+    const map = new Map();
+    for(const e of entries){
+      const key = (e.Datum || "").slice(0,7);
+      if(!/^\d{4}-\d{2}$/.test(key)) continue;
+      map.set(key, (map.get(key)||0) + (Number(e.Kosten)||0));
+    }
+    const labels = [...map.keys()].sort();
+    return { labels, sums: labels.map(k => Math.round(map.get(k))) };
+  }
+
+  $("chartBtn").addEventListener("click", ()=>{
+    const entries = load(GKEY);
+    const { labels, sums } = monthlyAggregate(entries);
+    const canvas = $("chart");
+    canvas.style.display = "block";
+    if(chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(canvas, {
+      type:"bar",
+      data:{ labels, datasets:[{ label:"Einnahmen (€)", data:sums }] },
+      options:{
+        responsive:true,
+        plugins:{ title:{ display:true, text:"Monatliche Einnahmen Übersicht" } },
+        scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } }
+      }
+    });
+    if(labels.length === 0) toast("Noch keine Daten fürs Monatsdiagramm.");
+  });
+
+  // CSV Export/Import (Gutachten)
+  function csvEscape(val){
+    const s = String(val ?? "");
+    if(/[",\n\r;]/.test(s)) return `"${s.replaceAll('"','""')}"`;
+    return s;
+  }
+  $("exportBtn").addEventListener("click", ()=>{
+    const entries = load(GKEY);
+    const header = ["Datum","Gutachten","Kosten","Kategorie","Klient","Bezahlt"];
+    const lines = [header.join(",")];
+    for(const e of entries){
+      lines.push([
+        e.Datum ?? "", e.Gutachten ?? "", e.Kosten ?? "", e.Kategorie ?? "", e.Klient ?? "", e.Bezahlt ?? ""
+      ].map(csvEscape).join(","));
+    }
+    const blob = new Blob([lines.join("\n")], { type:"text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "gutachten_erweitert.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast("CSV exportiert.");
+  });
+
+  function parseCSV(text){
+    const rows = [];
+    let i=0, field="", row=[], inQuotes=false;
+    while(i < text.length){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          const next = text[i+1];
+          if(next === '"'){ field+='"'; i+=2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += c; i++; continue;
+      }else{
+        if(c === '"'){ inQuotes=true; i++; continue; }
+        if(c === ","){ row.push(field); field=""; i++; continue; }
+        if(c === "\n" || c === "\r"){
+          if(c === "\r" && text[i+1] === "\n") i++;
+          row.push(field); field="";
+          if(row.length > 1 || row[0] !== "") rows.push(row);
+          row=[]; i++; continue;
+        }
+        field += c; i++; continue;
+      }
+    }
+    row.push(field);
+    if(row.length > 1 || row[0] !== "") rows.push(row);
+    return rows;
+  }
+
+  $("importFile").addEventListener("change", (e)=>{
+    const file = e.target.files?.[0];
+    if(!file){ e.target.value=""; return; }
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{
+        const text = String(reader.result || "");
+        const rows = parseCSV(text);
+        if(rows.length === 0) throw new Error("CSV ist leer.");
+        const header = rows[0].map(x=>x.trim().toLowerCase());
+        const idx = (name)=> header.findIndex(h=>h===name.toLowerCase());
+        const iDatum=idx("datum"), iGut=idx("gutachten"), iKos=idx("kosten"), iKat=idx("kategorie"), iKli=idx("klient"), iBez=idx("bezahlt");
+        if([iDatum,iGut,iKos,iKat,iKli,iBez].some(x=>x<0)) throw new Error("CSV Header muss enthalten: Datum,Gutachten,Kosten,Kategorie,Klient,Bezahlt");
+        const entries=[];
+        for(let r=1;r<rows.length;r++){
+          const cols=rows[r];
+          const Kosten = Number(String(cols[iKos]||"").replace(",","."));
+          if(!Number.isFinite(Kosten) || Kosten<0 || Kosten>1000) continue;
+          entries.push({
+            Datum:(cols[iDatum]||"").trim() || todayISO(),
+            Gutachten:(cols[iGut]||"").trim(),
+            Kosten,
+            Kategorie:(cols[iKat]||"").trim(),
+            Klient:(cols[iKli]||"").trim(),
+            Bezahlt:(cols[iBez]||"").trim()
+          });
+        }
+        save(GKEY, entries);
+        renderGutachten();
+        toast(`CSV importiert (${entries.length} Einträge).`);
+      }catch(err){
+        alert("Import fehlgeschlagen: " + (err?.message || err));
+      }
+    };
+    reader.readAsText(file);
+    e.target.value="";
+  });
+
+  $("clearBtn").addEventListener("click", ()=>{
+    if(confirm("Wirklich ALLE Gutachten löschen?")){
+      localStorage.removeItem(GKEY);
+      if(chartInstance){ chartInstance.destroy(); chartInstance=null; }
+      $("chart").style.display="none";
+      renderGutachten();
+      toast("Alles gelöscht.");
+    }
+  });
+
+  // ================= Arbeitsplan =================
+  const gutFields = $("gutFields");
+
+  function planSorted(items){
+    // sort by Datum asc, then Von asc
+    return [...items].sort((a,b)=>{
+      const d = (a.Datum||"").localeCompare(b.Datum||"");
+      if(d!==0) return d;
+      return (a.Von||"").localeCompare(b.Von||"");
+    });
+  }
+
+  function computeKumuliert(sorted){
+    let sum = 0;
+    const out = [];
+    for(const it of sorted){
+      if(it.Taetigkeit === "Gutachten"){
+        sum += Number(it.Honorar) || 0;
+        out.push({ ...it, Kumuliert: sum });
+      }else{
+        out.push({ ...it, Kumuliert: sum });
+      }
+    }
+    return out;
+  }
+
+  function refreshPlanKumuliertPreview(){
+    // preview: current kumuliert if you would add this item now
+    const items = planSorted(load(PKEY));
+    const withCum = computeKumuliert(items);
+    const currentCum = withCum.length ? (withCum[withCum.length-1].Kumuliert || 0) : 0;
+    const add = Number($("planHonorar").value) || 0;
+    $("planKumuliert").value = fmtEuro(currentCum + add);
+  }
+
+  $("planTaetigkeit").addEventListener("change", ()=>{
+    const isGut = $("planTaetigkeit").value === "Gutachten";
+    gutFields.style.display = isGut ? "block" : "none";
+    if(isGut) refreshPlanKumuliertPreview();
+  });
+  $("planHonorar").addEventListener("input", ()=>refreshPlanKumuliertPreview());
+
+  function renderPlan(){
+    const items = planSorted(load(PKEY));
+    const withCum = computeKumuliert(items);
+
+    const total = withCum.length;
+    const done = withCum.filter(x=>x.Erledigt).length;
+    const gutCount = withCum.filter(x=>x.Taetigkeit==="Gutachten").length;
+    const transferred = withCum.filter(x=>x.Uebertragen).length;
+
+    $("planStats").textContent = `Einträge: ${total} | Erledigt: ${done} | Gutachten: ${gutCount} | Übertragen: ${transferred}`;
+
+    const tb = $("planTbody");
+    tb.innerHTML = "";
+
+    for(const it of withCum){
+      const isGut = it.Taetigkeit === "Gutachten";
+      const hasTransfer = !!it.Uebertragen;
+
+      const transferTag = hasTransfer
+        ? `<span class="pill tag-ok">✓ gespeichert</span>`
+        : `<span class="pill tag-warn">nicht gespeichert</span>`;
+
+      tb.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td>${escapeHtml(it.Datum||"")}</td>
+          <td>${escapeHtml(timeRange(it.Von,it.Bis))}</td>
+          <td>${escapeHtml(it.Taetigkeit||"")}</td>
+          <td>${isGut ? escapeHtml(it.GutNr||"") : ""}</td>
+          <td>${isGut ? escapeHtml(fmtEuro(it.Honorar)) : ""}</td>
+          <td>${isGut ? escapeHtml(fmtEuro(it.Kumuliert)) : escapeHtml(fmtEuro(it.Kumuliert))}</td>
+          <td>${escapeHtml(it.Notiz||"")}</td>
+          <td>
+            <input type="checkbox" data-done="${escapeHtml(it.id)}" ${it.Erledigt ? "checked" : ""} />
+          </td>
+          <td>
+            ${isGut ? `
+              <button class="btn-outline icon-btn" data-xfer="${escapeHtml(it.id)}" ${hasTransfer ? "disabled" : ""} title="Als Gutachten speichern">
+                💾
+              </button>
+              <span style="margin-left:8px">${transferTag}</span>
+            ` : `
+              <span class="small">—</span>
+            `}
+          </td>
+          <td>
+            <button class="danger icon-btn" data-del="${escapeHtml(it.id)}" title="Löschen">🗑</button>
+          </td>
+        </tr>
+      `);
+    }
+
+    // Wire events
+    tb.querySelectorAll('input[type="checkbox"][data-done]').forEach(cb=>{
+      cb.addEventListener("change", (e)=>{
+        const id = e.target.getAttribute("data-done");
+        const checked = e.target.checked;
+        planSetDone(id, checked);
+      });
+    });
+
+    tb.querySelectorAll('button[data-xfer]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.getAttribute("data-xfer");
+        transferPlanToGutachten(id, { switchTab:true, autoDone:true });
+      });
+    });
+
+    tb.querySelectorAll('button[data-del]').forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.getAttribute("data-del");
+        planDelete(id);
+      });
+    });
+
+    // keep preview updated if Gutachten selected
+    if($("planTaetigkeit").value === "Gutachten") refreshPlanKumuliertPreview();
+  }
+
+  function planSave(){
+    const Taetigkeit = ($("planTaetigkeit").value || "").trim();
+    if(!Taetigkeit){ alert("Bitte Tätigkeit auswählen."); return; }
+
+    const item = {
+      id: uid(),
+      Datum: $("planDatum").value || todayISO(),
+      Von: $("planVon").value || "",
+      Bis: $("planBis").value || "",
+      Taetigkeit,
+      Notiz: $("planNotiz").value.trim(),
+      GutNr: "",
+      Honorar: 0,
+      Erledigt: false,
+      Uebertragen: false
+    };
+
+    if(Taetigkeit === "Gutachten"){
+      item.GutNr = $("planGutNr").value.trim();
+      item.Honorar = Number($("planHonorar").value);
+
+      if(!Number.isFinite(item.Honorar)){
+        alert("Honorar muss eine Zahl sein.");
+        return;
+      }
+      if(item.Honorar < 0 || item.Honorar > 1000){
+        alert("Honorar muss zwischen 0 und 1000 € liegen.");
+        return;
+      }
+    }
+
+    const items = load(PKEY);
+    items.push(item);
+    save(PKEY, items);
+
+    // reset inputs
+    $("planVon").value = "";
+    $("planBis").value = "";
+    $("planTaetigkeit").value = "";
+    $("planNotiz").value = "";
+    $("planGutNr").value = "";
+    $("planHonorar").value = "";
+    $("planKumuliert").value = "";
+    gutFields.style.display = "none";
+    $("planDatum").value = todayISO();
+
+    toast("Arbeitsplan gespeichert.");
+    renderPlan();
+  }
+
+  function planSetDone(id, done){
+    const items = load(PKEY);
+    const idx = items.findIndex(x=>x.id === id);
+    if(idx < 0) return;
+
+    items[idx].Erledigt = !!done;
+    save(PKEY, items);
+    renderPlan();
+
+    // Wenn erledigt gesetzt und Gutachten + noch nicht übertragen -> automatisch übertragen
+    const it = items[idx];
+    if(done && it.Taetigkeit === "Gutachten" && !it.Uebertragen){
+      transferPlanToGutachten(id, { switchTab:true, autoDone:false });
+    }
+  }
+
+  function planDelete(id){
+    const items = load(PKEY).filter(x=>x.id !== id);
+    save(PKEY, items);
+    toast("Plan-Eintrag gelöscht.");
+    renderPlan();
+  }
+
+  $("planSaveBtn").addEventListener("click", planSave);
+  $("planClearBtn").addEventListener("click", ()=>{
+    if(confirm("Wirklich den kompletten Arbeitsplan löschen?")){
+      localStorage.removeItem(PKEY);
+      toast("Arbeitsplan gelöscht.");
+      renderPlan();
+    }
+  });
+
+  function transferPlanToGutachten(id, opts){
+    const { switchTab, autoDone } = opts || { switchTab:true, autoDone:false };
+
+    const plan = load(PKEY);
+    const idx = plan.findIndex(x=>x.id === id);
+    if(idx < 0) return;
+
+    const it = plan[idx];
+    if(it.Taetigkeit !== "Gutachten"){
+      alert("Nur Gutachten-Einträge können übertragen werden.");
+      return;
+    }
+    if(it.Uebertragen){
+      toast("Schon übertragen.");
+      return;
+    }
+
+    const gutName = it.GutNr ? `Gutachten Nr. ${it.GutNr}` : `Gutachten`;
+    const entry = {
+      Datum: it.Datum || todayISO(),
+      Gutachten: gutName,
+      Kosten: Number(it.Honorar) || 0,
+      Kategorie: "",           // kannst du später per Hand setzen
+      Klient: it.Notiz || "",  // Notiz als Klient/Info übernehmen
+      Bezahlt: ""              // leer lassen
+    };
+
+    if(!addGutachten(entry)) return;
+
+    // mark plan as transferred
+    plan[idx].Uebertragen = true;
+    if(autoDone) plan[idx].Erledigt = true;
+    save(PKEY, plan);
+    renderPlan();
+
+    toast("Als Gutachten gespeichert.");
+    if(switchTab){
+      showTab("gutachten");
+      // optional: in Formular vorfüllen (nicht nötig, weil schon gespeichert)
+    }
+  }
+
+  // ================= Init =================
+  $("datum").value = todayISO();
+  $("planDatum").value = todayISO();
+  showTab("gutachten");
+  renderGutachten();
+  renderPlan();
 </script>
 </body>
 </html>
