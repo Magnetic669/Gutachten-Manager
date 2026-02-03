@@ -46,7 +46,7 @@
     .small{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}
 
     .tableWrap{overflow:auto;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:rgba(255,255,255,.75)}
-    table{width:100%;border-collapse:collapse;min-width:1150px}
+    table{width:100%;border-collapse:collapse;min-width:1200px}
     th,td{padding:8px 10px;border-bottom:1px solid rgba(0,0,0,.06);font-size:13px;white-space:nowrap;text-align:left}
     th{background:rgba(250,250,250,.95);position:sticky;top:0;z-index:1;color:var(--muted);font-size:12px}
 
@@ -99,11 +99,7 @@
         <input id="kosten" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
 
         <label for="kategorie">Kategorie</label>
-        <select id="kategorie">
-          <option value=""></option>
-          <option value="BBRZ">BBRZ</option>
-          <option value="Ordination">Ordination</option>
-        </select>
+        <select id="kategorie"></select>
 
         <label for="klient">Klient</label>
         <input id="klient" placeholder="optional" />
@@ -161,8 +157,9 @@
       <section class="card">
         <h3 style="margin:0 0 6px;">📅 Arbeitsplan</h3>
         <p class="sub">
-          Zusatzfelder nur für Gutachten: <b>Gutachten-Nr.</b>, <b>Honorar</b>, <b>Kumuliert</b> (automatisch).
-          <br>✅ Wenn du „Erledigt“ anhakst, wird es automatisch im Tab „Gutachten“ gespeichert und dorthin gewechselt.
+          Tätigkeit wird beim Übertragen automatisch als <b>Kategorie</b> im Gutachten gespeichert.
+          Zusatzfelder sind immer sichtbar. Kumuliert wird automatisch berechnet.
+          <br>✅ „Erledigt“ anhaken = automatisch speichern & zum Gutachten-Tab wechseln.
         </p>
 
         <label for="planDatum">Datum</label>
@@ -180,29 +177,21 @@
         </div>
 
         <label for="planTaetigkeit">Tätigkeit</label>
-        <select id="planTaetigkeit">
-          <option value=""></option>
-          <option value="Gutachten">Gutachten</option>
-          <option value="Ordination">Ordination</option>
-          <option value="BBRZ">BBRZ</option>
-          <option value="Frei">Frei</option>
-        </select>
+        <select id="planTaetigkeit"></select>
 
-        <div id="gutFields" style="display:none;">
-          <div class="row2">
-            <div>
-              <label for="planGutNr">Gutachten-Nr.</label>
-              <input id="planGutNr" placeholder="z.B. 12" />
-            </div>
-            <div>
-              <label for="planHonorar">Honorar pro Gutachten (€)</label>
-              <input id="planHonorar" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
-            </div>
+        <div class="row2">
+          <div>
+            <label for="planGutNr">Gutachten-Nr.</label>
+            <input id="planGutNr" placeholder="z.B. 12" />
           </div>
-
-          <label for="planKumuliert">Kumuliertes Honorar (€) (automatisch)</label>
-          <input id="planKumuliert" type="text" disabled placeholder="wird berechnet..." />
+          <div>
+            <label for="planHonorar">Honorar pro Eintrag (€)</label>
+            <input id="planHonorar" type="number" step="0.01" min="0" max="1000" placeholder="z.B. 450" />
+          </div>
         </div>
+
+        <label for="planKumuliert">Kumuliertes Honorar (€) (automatisch)</label>
+        <input id="planKumuliert" type="text" disabled placeholder="wird berechnet..." />
 
         <label for="planNotiz">Notiz</label>
         <input id="planNotiz" placeholder="z.B. Klient/Ort/Infos..." />
@@ -247,13 +236,17 @@
 <div id="toast" class="toast"></div>
 
 <script>
-  // ================= Helpers =================
+  // ================= Konfig =================
   const ZIELBETRAG = 45000;
-  const GKEY = "gutachten_v2";
-  const PKEY = "arbeitsplan_v2";
+  const GKEY = "gutachten_v3";
+  const PKEY = "arbeitsplan_v3";
+
+  // ✅ EINHEITLICHE DROPDOWN-OPTIONEN (Tätigkeit + Kategorie)
+  const CATEGORY_OPTIONS = ["Gutachten", "Ordination", "BBRZ", "Pause"];
 
   const $ = (id) => document.getElementById(id);
 
+  // ================= Helpers =================
   function todayISO(){
     const d = new Date();
     const yyyy = d.getFullYear();
@@ -308,6 +301,10 @@
     if(!a && !b) return "";
     if(a && b) return `${a}–${b}`;
     return a || b;
+  }
+
+  function fillSelect(selectEl, options){
+    selectEl.innerHTML = `<option value=""></option>` + options.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join("");
   }
 
   // ================= Tabs =================
@@ -367,20 +364,10 @@
   }
 
   function addGutachten(entry){
-    // Validierung max 1000
     const k = Number(entry.Kosten);
-    if(!Number.isFinite(k)){
-      alert("Kosten müssen eine Zahl sein.");
-      return false;
-    }
-    if(k > 1000){
-      alert("Einzelwert darf maximal 1.000 € betragen.");
-      return false;
-    }
-    if(k < 0){
-      alert("Kosten dürfen nicht negativ sein.");
-      return false;
-    }
+    if(!Number.isFinite(k)){ alert("Kosten müssen eine Zahl sein."); return false; }
+    if(k > 1000){ alert("Einzelwert darf maximal 1.000 € betragen."); return false; }
+    if(k < 0){ alert("Kosten dürfen nicht negativ sein."); return false; }
 
     const entries = load(GKEY);
     entries.push(entry);
@@ -541,10 +528,7 @@
   });
 
   // ================= Arbeitsplan =================
-  const gutFields = $("gutFields");
-
   function planSorted(items){
-    // sort by Datum asc, then Von asc
     return [...items].sort((a,b)=>{
       const d = (a.Datum||"").localeCompare(b.Datum||"");
       if(d!==0) return d;
@@ -556,18 +540,13 @@
     let sum = 0;
     const out = [];
     for(const it of sorted){
-      if(it.Taetigkeit === "Gutachten"){
-        sum += Number(it.Honorar) || 0;
-        out.push({ ...it, Kumuliert: sum });
-      }else{
-        out.push({ ...it, Kumuliert: sum });
-      }
+      sum += Number(it.Honorar) || 0; // ✅ kumuliert jetzt über ALLE Tätigkeiten (wie Standard)
+      out.push({ ...it, Kumuliert: sum });
     }
     return out;
   }
 
   function refreshPlanKumuliertPreview(){
-    // preview: current kumuliert if you would add this item now
     const items = planSorted(load(PKEY));
     const withCum = computeKumuliert(items);
     const currentCum = withCum.length ? (withCum[withCum.length-1].Kumuliert || 0) : 0;
@@ -575,12 +554,7 @@
     $("planKumuliert").value = fmtEuro(currentCum + add);
   }
 
-  $("planTaetigkeit").addEventListener("change", ()=>{
-    const isGut = $("planTaetigkeit").value === "Gutachten";
-    gutFields.style.display = isGut ? "block" : "none";
-    if(isGut) refreshPlanKumuliertPreview();
-  });
-  $("planHonorar").addEventListener("input", ()=>refreshPlanKumuliertPreview());
+  $("planHonorar").addEventListener("input", refreshPlanKumuliertPreview);
 
   function renderPlan(){
     const items = planSorted(load(PKEY));
@@ -588,18 +562,14 @@
 
     const total = withCum.length;
     const done = withCum.filter(x=>x.Erledigt).length;
-    const gutCount = withCum.filter(x=>x.Taetigkeit==="Gutachten").length;
     const transferred = withCum.filter(x=>x.Uebertragen).length;
-
-    $("planStats").textContent = `Einträge: ${total} | Erledigt: ${done} | Gutachten: ${gutCount} | Übertragen: ${transferred}`;
+    $("planStats").textContent = `Einträge: ${total} | Erledigt: ${done} | Übertragen: ${transferred}`;
 
     const tb = $("planTbody");
     tb.innerHTML = "";
 
     for(const it of withCum){
-      const isGut = it.Taetigkeit === "Gutachten";
       const hasTransfer = !!it.Uebertragen;
-
       const transferTag = hasTransfer
         ? `<span class="pill tag-ok">✓ gespeichert</span>`
         : `<span class="pill tag-warn">nicht gespeichert</span>`;
@@ -609,36 +579,24 @@
           <td>${escapeHtml(it.Datum||"")}</td>
           <td>${escapeHtml(timeRange(it.Von,it.Bis))}</td>
           <td>${escapeHtml(it.Taetigkeit||"")}</td>
-          <td>${isGut ? escapeHtml(it.GutNr||"") : ""}</td>
-          <td>${isGut ? escapeHtml(fmtEuro(it.Honorar)) : ""}</td>
-          <td>${isGut ? escapeHtml(fmtEuro(it.Kumuliert)) : escapeHtml(fmtEuro(it.Kumuliert))}</td>
+          <td>${escapeHtml(it.GutNr||"")}</td>
+          <td>${escapeHtml(fmtEuro(it.Honorar))}</td>
+          <td>${escapeHtml(fmtEuro(it.Kumuliert))}</td>
           <td>${escapeHtml(it.Notiz||"")}</td>
+          <td><input type="checkbox" data-done="${escapeHtml(it.id)}" ${it.Erledigt ? "checked" : ""} /></td>
           <td>
-            <input type="checkbox" data-done="${escapeHtml(it.id)}" ${it.Erledigt ? "checked" : ""} />
+            <button class="btn-outline icon-btn" data-xfer="${escapeHtml(it.id)}" ${hasTransfer ? "disabled" : ""} title="Als Gutachten speichern">💾</button>
+            <span style="margin-left:8px">${transferTag}</span>
           </td>
-          <td>
-            ${isGut ? `
-              <button class="btn-outline icon-btn" data-xfer="${escapeHtml(it.id)}" ${hasTransfer ? "disabled" : ""} title="Als Gutachten speichern">
-                💾
-              </button>
-              <span style="margin-left:8px">${transferTag}</span>
-            ` : `
-              <span class="small">—</span>
-            `}
-          </td>
-          <td>
-            <button class="danger icon-btn" data-del="${escapeHtml(it.id)}" title="Löschen">🗑</button>
-          </td>
+          <td><button class="danger icon-btn" data-del="${escapeHtml(it.id)}" title="Löschen">🗑</button></td>
         </tr>
       `);
     }
 
-    // Wire events
     tb.querySelectorAll('input[type="checkbox"][data-done]').forEach(cb=>{
       cb.addEventListener("change", (e)=>{
         const id = e.target.getAttribute("data-done");
-        const checked = e.target.checked;
-        planSetDone(id, checked);
+        planSetDone(id, e.target.checked);
       });
     });
 
@@ -656,13 +614,16 @@
       });
     });
 
-    // keep preview updated if Gutachten selected
-    if($("planTaetigkeit").value === "Gutachten") refreshPlanKumuliertPreview();
+    refreshPlanKumuliertPreview();
   }
 
   function planSave(){
     const Taetigkeit = ($("planTaetigkeit").value || "").trim();
     if(!Taetigkeit){ alert("Bitte Tätigkeit auswählen."); return; }
+
+    const Honorar = Number($("planHonorar").value || 0);
+    if(!Number.isFinite(Honorar)){ alert("Honorar muss eine Zahl sein."); return; }
+    if(Honorar < 0 || Honorar > 1000){ alert("Honorar muss zwischen 0 und 1000 € liegen."); return; }
 
     const item = {
       id: uid(),
@@ -670,40 +631,23 @@
       Von: $("planVon").value || "",
       Bis: $("planBis").value || "",
       Taetigkeit,
+      GutNr: $("planGutNr").value.trim(),
+      Honorar,
       Notiz: $("planNotiz").value.trim(),
-      GutNr: "",
-      Honorar: 0,
       Erledigt: false,
       Uebertragen: false
     };
-
-    if(Taetigkeit === "Gutachten"){
-      item.GutNr = $("planGutNr").value.trim();
-      item.Honorar = Number($("planHonorar").value);
-
-      if(!Number.isFinite(item.Honorar)){
-        alert("Honorar muss eine Zahl sein.");
-        return;
-      }
-      if(item.Honorar < 0 || item.Honorar > 1000){
-        alert("Honorar muss zwischen 0 und 1000 € liegen.");
-        return;
-      }
-    }
 
     const items = load(PKEY);
     items.push(item);
     save(PKEY, items);
 
-    // reset inputs
     $("planVon").value = "";
     $("planBis").value = "";
     $("planTaetigkeit").value = "";
-    $("planNotiz").value = "";
     $("planGutNr").value = "";
     $("planHonorar").value = "";
-    $("planKumuliert").value = "";
-    gutFields.style.display = "none";
+    $("planNotiz").value = "";
     $("planDatum").value = todayISO();
 
     toast("Arbeitsplan gespeichert.");
@@ -719,9 +663,8 @@
     save(PKEY, items);
     renderPlan();
 
-    // Wenn erledigt gesetzt und Gutachten + noch nicht übertragen -> automatisch übertragen
-    const it = items[idx];
-    if(done && it.Taetigkeit === "Gutachten" && !it.Uebertragen){
+    // ✅ wenn erledigt: automatisch übertragen (falls nicht schon)
+    if(done && !items[idx].Uebertragen){
       transferPlanToGutachten(id, { switchTab:true, autoDone:false });
     }
   }
@@ -750,46 +693,43 @@
     if(idx < 0) return;
 
     const it = plan[idx];
-    if(it.Taetigkeit !== "Gutachten"){
-      alert("Nur Gutachten-Einträge können übertragen werden.");
-      return;
-    }
-    if(it.Uebertragen){
-      toast("Schon übertragen.");
-      return;
-    }
+    if(it.Uebertragen){ toast("Schon übertragen."); return; }
 
-    const gutName = it.GutNr ? `Gutachten Nr. ${it.GutNr}` : `Gutachten`;
+    const gutName = it.GutNr ? `Gutachten Nr. ${it.GutNr}` : (it.Taetigkeit || "Eintrag");
     const entry = {
       Datum: it.Datum || todayISO(),
       Gutachten: gutName,
       Kosten: Number(it.Honorar) || 0,
-      Kategorie: "",           // kannst du später per Hand setzen
-      Klient: it.Notiz || "",  // Notiz als Klient/Info übernehmen
-      Bezahlt: ""              // leer lassen
+      Kategorie: it.Taetigkeit || "",     // ✅ Tätigkeit = Kategorie
+      Klient: it.Notiz || "",
+      Bezahlt: ""
     };
 
     if(!addGutachten(entry)) return;
 
-    // mark plan as transferred
     plan[idx].Uebertragen = true;
     if(autoDone) plan[idx].Erledigt = true;
     save(PKEY, plan);
-    renderPlan();
 
+    renderPlan();
     toast("Als Gutachten gespeichert.");
+
     if(switchTab){
       showTab("gutachten");
-      // optional: in Formular vorfüllen (nicht nötig, weil schon gespeichert)
     }
   }
 
   // ================= Init =================
+  // Dropdowns füllen (einheitlich)
+  fillSelect($("kategorie"), CATEGORY_OPTIONS);
+  fillSelect($("planTaetigkeit"), CATEGORY_OPTIONS);
+
   $("datum").value = todayISO();
   $("planDatum").value = todayISO();
   showTab("gutachten");
   renderGutachten();
   renderPlan();
+  refreshPlanKumuliertPreview();
 </script>
 </body>
 </html>
